@@ -14,20 +14,30 @@ jobs:
             contents: write
         steps:
 
+            -   name: Generate app token
+                id: generate_token
+                uses: actions/create-github-app-token@v3
+                with:
+                    client-id: ${{ secrets.AUTOMATION_CLIENT_ID }}
+                    private-key: ${{ secrets.AUTOMATION_CLIENT_SECRET }}
+                    owner: ${{ github.repository_owner }}
+
             # Check out current repository
             -   name: Fetch Sources
-                uses: actions/checkout@v2
+                uses: actions/checkout@v7
+                with:
+                    token: ${{ steps.generate_token.outputs.token }}
 
             -   name: Setup PHP Action
                 uses: shivammathur/setup-php@v2
                 with:
-                    php-version: 7.4
+                    php-version: 8.3
                     coverage: none
                     extensions: pdo_sqlite, gd
                     tools: cs2pr
 
             -   name: Get bundle generator
-                uses: actions/checkout@v2
+                uses: actions/checkout@v7
                 with:
                     token: ${{ secrets.GITHUB_TOKEN }}
                     repository: ibexa/bundle-generator
@@ -35,9 +45,7 @@ jobs:
 
             -   name: "Install composer and dependencies"
                 run: |
-                    php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-                    php composer-setup.php
-                    php composer.phar install -d .generator
+                    composer install -d .generator
 
             # Cleanup project
             -   name: Cleanup
@@ -46,21 +54,18 @@ jobs:
                     export LANG=C
                     # Prepare variables
                     NAME="${GITHUB_REPOSITORY##*/}"
-                    ACTOR=$(echo $GITHUB_ACTOR)
                     PACKAGE_NAME=$(echo $NAME | sed 's/[^a-zA-Z0-9]//g' | tr '[:upper:]' '[:lower:]')
-                    VENDOR_NAME=$(echo $ACTOR | sed 's/[^a-zA-Z0-9]//g' | tr '[:upper:]' '[:lower:]')
-                    VENDOR_NAMESPACE=$(echo $ACTOR | sed 's/\<./\U&/g' | sed 's/[^a-zA-Z0-9]//g')
                     
                     # Converts repository name to UpperCamelCase (if separated by "-")
                     _temp=(${NAME//-/ })
                     BUNDLE_NAME=$(printf %s "${_temp[@]^}")
                     
                     # Remove lines marked with #REMOVE-ON-CLEANUP#
-                    find . -type f -exec sed -i '/#REMOVE-ON-CLEANUP#/d' {} +
+                    find . -type f -not -path './.git/*' -not -path './.generator/*' -exec sed -i '/#REMOVE-ON-CLEANUP#/d' {} +
                     
                     # Run generator
-                    echo Running generator with: php .generator/bin/ibexa-bundle-generator $PACKAGE_NAME $PACKAGE_NAME-dir --vendor-name=$VENDOR_NAME --vendor-namespace=$VENDOR_NAMESPACE --bundle-name=$BUNDLE_NAME --skeleton-name=extension
-                    php .generator/bin/ibexa-bundle-generator $PACKAGE_NAME $PACKAGE_NAME-dir --vendor-name=$VENDOR_NAME --vendor-namespace=$VENDOR_NAMESPACE --bundle-name=$BUNDLE_NAME --skeleton-name=extension
+                    echo Running generator with: php .generator/bin/ibexa-bundle-generator $PACKAGE_NAME $PACKAGE_NAME-dir --vendor-name=ibexa --vendor-namespace=Ibexa --bundle-name=$BUNDLE_NAME --skeleton-name=ibexa-oss
+                    php .generator/bin/ibexa-bundle-generator $PACKAGE_NAME $PACKAGE_NAME-dir --vendor-name=ibexa --vendor-namespace=Ibexa --bundle-name=$BUNDLE_NAME --skeleton-name=ibexa-oss
                     
                     # Remove ibexa/bundle-template workflows 
                     rm -rf .github
@@ -70,10 +75,8 @@ jobs:
                     
                     # Cleanup
                     rm -rf \
-                      .github/readme \
-                      .github/template-cleanup \
                       .github/workflows/template-cleanup.yml \
-                      .generator composer-setup.php composer.phar \
+                      .generator \
                       $PACKAGE_NAME-dir
             # Commit modified files
             -   name: Commit files
@@ -84,7 +87,4 @@ jobs:
                     git commit -m "Template cleanup"
             # Push changes
             -   name: Push changes
-                uses: ad-m/github-push-action@master
-                with:
-                    branch: main
-                    github_token: ${{ secrets.GITHUB_TOKEN }}
+                run: git push origin HEAD:6.0
