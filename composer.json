@@ -9,7 +9,7 @@
     "prefer-stable": true,
     "require": {
         "php": ">=8.3",
-        "ibexa/core": "~5.0.x-dev",
+        "ibexa/core": "~6.0.x-dev",
         "symfony/config": "^7.4",
         "symfony/dependency-injection": "^7.4",
         "symfony/event-dispatcher": "^7.4",
@@ -20,16 +20,16 @@
     "require-dev": {
         "dama/doctrine-test-bundle": "^8.2",
         "deptrac/deptrac": "^3.0",
-        "ibexa/behat": "~5.0.x-dev",
+        "ibexa/behat": "~6.0.x-dev",
         "ibexa/code-style": "~2.3.0",
-        "ibexa/phpstan": "~5.0.x-dev",
-        "ibexa/rector": "~5.0.x-dev",
-        "ibexa/test-core": "~5.0.x-dev",
+        "ibexa/phpstan": "~6.0.x-dev",
+        "ibexa/rector": "~6.0.x-dev",
+        "ibexa/test-core": "~6.0.x-dev",
         "phpstan/phpstan": "^2.0",
         "phpstan/phpstan-phpunit": "^2.0",
         "phpstan/phpstan-strict-rules": "^2",
         "phpstan/phpstan-symfony": "^2.0",
-        "phpunit/phpunit": "^9.5",
+        "phpunit/phpunit": "^12.5",
         "symfony/phpunit-bridge": "^7.4"
     },
     "autoload": {
@@ -64,7 +64,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-main": "5.0.x-dev"
+            "dev-main": "6.0.x-dev"
         }
     },
     "config": {
