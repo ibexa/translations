@@ -2,7 +2,7 @@ Ibexa DXP \<Package name\>
 ====================
 
 ## COPYRIGHT
-Copyright (C) 1999-2025 Ibexa AS (formerly eZ Systems AS). All rights reserved.
+Copyright (C) 1999-2026 Ibexa AS (formerly eZ Systems AS). All rights reserved.
 
 ## LICENSE
 This source code is available separately under the following licenses:
