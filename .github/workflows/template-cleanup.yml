@@ -1,15 +1,12 @@
 name: Template Cleanup
-on:
-    push:
-        branches:
-            - '6.0'
+on: push
 
 jobs:
 
     template-cleanup:
         name: Template Cleanup
         runs-on: ubuntu-latest
-        if: github.event.repository.name != 'bundle-template'
+        if: github.event.repository.name != 'bundle-template' && github.ref_name == github.event.repository.default_branch
         permissions:
             contents: write
         steps:
@@ -87,4 +84,4 @@ jobs:
                     git commit -m "Template cleanup"
             # Push changes
             -   name: Push changes
-                run: git push origin HEAD:6.0
+                run: git push origin "HEAD:$GITHUB_REF_NAME"
