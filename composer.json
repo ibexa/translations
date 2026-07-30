@@ -1,5 +1,6 @@
 {
     "name": "ibexa/translations",
+    "description": "UI Translations tools for Ibexa DXP",
     "license": "(GPL-2.0-only or proprietary)",
     "type": "ibexa-bundle",
     "keywords": [
