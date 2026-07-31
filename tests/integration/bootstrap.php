@@ -49,11 +49,13 @@ $application->run(new ArrayInput([
 /** @var ContainerInterface $testContainer */
 $testContainer = $kernel->getContainer()->get('test.service_container');
 
+/** @var LegacySchemaImporter $schemaImporter */
 $schemaImporter = $testContainer->get(LegacySchemaImporter::class);
 foreach ($kernel->getSchemaFiles() as $file) {
     $schemaImporter->importSchema($file);
 }
 
+/** @var FixtureImporter $fixtureImporter */
 $fixtureImporter = $testContainer->get(FixtureImporter::class);
 foreach ($kernel->getFixtures() as $fixture) {
     $fixtureImporter->import($fixture);

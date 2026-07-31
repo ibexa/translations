@@ -1,14 +1,11 @@
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/12.5/phpunit.xsd"
          bootstrap="tests/integration/bootstrap.php"
          beStrictAboutOutputDuringTests="true"
-         beStrictAboutTodoAnnotatedTests="true"
-         failOnWarning="true"
-         verbose="true">
+         failOnWarning="true">
     <php>
         <env name="KERNEL_CLASS" value="Ibexa\Tests\Integration\Translations\TestKernel" />
         <env name="SEARCH_ENGINE" value="legacy" />
-        <env name="DATABASE_URL" value="sqlite://i@i/var/test.db" />
         <env name="SYMFONY_DEPRECATIONS_HELPER" value="max[self]=0&amp;max[direct]=0&amp;verbose=0"/>
         <ini name="intl.default_locale" value="en_US" />
     </php>
@@ -18,9 +15,7 @@
         </testsuite>
     </testsuites>
     <extensions>
-        <extension class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension" />
+        <bootstrap class="DAMA\DoctrineTestBundle\PHPUnit\PHPUnitExtension" />
+        <bootstrap class="Symfony\Bridge\PhpUnit\SymfonyExtension" />
     </extensions>
-    <listeners>
-        <listener class="Symfony\Bridge\PhpUnit\SymfonyTestsListener"/>
-    </listeners>
 </phpunit>
