@@ -5,6 +5,7 @@
     "prettier": "eslint-config-ibexa/prettier",
     "dependencies": {},
     "devDependencies": {
+        "@typescript-eslint/typescript-estree": "^8.62.1",
         "eslint-config-ibexa": "https://github.com/ibexa/eslint-config-ibexa.git#v1.0.0"
     },
     "scripts": {

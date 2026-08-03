@@ -1,0 +1,15 @@
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    Ibexa\Translations\Extractor\JavaScriptFileVisitor:
+        tags:
+            - { name: jms_translation.file_visitor }
+
+    Ibexa\Translations\Extractor\TypeScriptFileVisitor:
+        tags:
+            - { name: jms_translation.file_visitor }
+
+    Ibexa\Translations\Extractor\TypeScriptExtractorClient: ~
