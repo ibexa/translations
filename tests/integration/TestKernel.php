@@ -8,7 +8,9 @@ declare(strict_types=1);
 
 namespace Ibexa\Tests\Integration\Translations;
 
+use Ibexa\Bundle\Translations\IbexaTranslationsBundle;
 use Ibexa\Contracts\Test\Core\IbexaTestKernel;
+use JMS\TranslationBundle\Translation\Extractor\FileExtractor;
 
 final class TestKernel extends IbexaTestKernel
 {
@@ -29,10 +31,19 @@ final class TestKernel extends IbexaTestKernel
     public function registerBundles(): iterable
     {
         yield from parent::registerBundles();
+
+        yield new IbexaTranslationsBundle();
     }
 
     protected static function getExposedServicesByClass(): iterable
     {
         yield from parent::getExposedServicesByClass();
+    }
+
+    protected static function getExposedServicesById(): iterable
+    {
+        yield from parent::getExposedServicesById();
+
+        yield 'jms_translation.extractor.file_extractor' => FileExtractor::class;
     }
 }

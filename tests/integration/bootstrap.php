@@ -32,12 +32,12 @@ if ($databaseUrl !== false && !str_starts_with($databaseUrl, 'sqlite')) {
         '--force' => '1',
         '--quiet' => true,
     ]));
-}
 
-$application->run(new ArrayInput([
-    'command' => 'doctrine:database:create',
-    '--quiet' => true,
-]));
+    $application->run(new ArrayInput([
+        'command' => 'doctrine:database:create',
+        '--quiet' => true,
+    ]));
+}
 
 $application->run(new ArrayInput([
     'command' => 'doctrine:schema:update',
