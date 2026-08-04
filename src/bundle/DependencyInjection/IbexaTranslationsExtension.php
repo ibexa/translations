@@ -14,7 +14,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
-use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\Yaml\Yaml;
 
 final class IbexaTranslationsExtension extends Extension implements PrependExtensionInterface
@@ -27,13 +26,6 @@ final class IbexaTranslationsExtension extends Extension implements PrependExten
         $phpLoader = new PhpFileLoader($container, $configLocator);
 
         $phpLoader->load('services.php');
-
-        if ($this->shouldLoadTestServices($container)) {
-            $yamlLoader = new YamlFileLoader($container, $configLocator);
-            $yamlLoader->load('test/pages.yaml');
-            $yamlLoader->load('test/components.yaml');
-            $yamlLoader->load('test/contexts.yaml');
-        }
     }
 
     public function prepend(ContainerBuilder $container): void
@@ -69,11 +61,5 @@ final class IbexaTranslationsExtension extends Extension implements PrependExten
                 ],
             ],
         ]);
-    }
-
-    private function shouldLoadTestServices(ContainerBuilder $container): bool
-    {
-        return $container->hasParameter('ibexa.behat.browser.enabled')
-            && true === $container->getParameter('ibexa.behat.browser.enabled');
     }
 }
