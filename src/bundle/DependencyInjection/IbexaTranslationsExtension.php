@@ -13,6 +13,7 @@ use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
+use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\Yaml\Yaml;
 
@@ -22,17 +23,16 @@ final class IbexaTranslationsExtension extends Extension implements PrependExten
         array $configs,
         ContainerBuilder $container
     ): void {
-        $loader = new YamlFileLoader(
-            $container,
-            new FileLocator(__DIR__ . '/../Resources/config')
-        );
+        $configLocator = new FileLocator(__DIR__ . '/../Resources/config');
+        $phpLoader = new PhpFileLoader($container, $configLocator);
 
-        $loader->load('services.yaml');
+        $phpLoader->load('services.php');
 
         if ($this->shouldLoadTestServices($container)) {
-            $loader->load('test/pages.yaml');
-            $loader->load('test/components.yaml');
-            $loader->load('test/contexts.yaml');
+            $yamlLoader = new YamlFileLoader($container, $configLocator);
+            $yamlLoader->load('test/pages.yaml');
+            $yamlLoader->load('test/components.yaml');
+            $yamlLoader->load('test/contexts.yaml');
         }
     }
 
