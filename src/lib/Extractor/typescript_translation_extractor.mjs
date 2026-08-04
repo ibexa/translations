@@ -38,7 +38,9 @@ const formatWarning = (argumentName, node, filePath) => {
     const sourceLine = node?.loc?.start?.line ?? 0;
     const sourceColumn = node?.loc?.start?.column ?? 0;
 
-    return `Could not extract ${argumentName}, expected string literal but got ${node?.type ?? 'nothing'} (in ${filePath} on line ${sourceLine} column ${sourceColumn}).`;
+    return `Could not extract ${argumentName}, expected string literal but got ${
+        node?.type ?? 'nothing'
+    } (in ${filePath} on line ${sourceLine} column ${sourceColumn}).`;
 };
 
 const findClosestLeadingComment = (source, comments, node) => {
