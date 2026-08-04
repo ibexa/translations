@@ -23,7 +23,7 @@ final class TranslationExtractorTest extends IbexaKernelTestCase
         ));
         self::assertInstanceOf(FileExtractor::class, $fileExtractor);
 
-        $fileExtractor->setDirectory(__DIR__ . '/../Resources/translation_extractors');
+        $fileExtractor->setDirectory(__DIR__ . '/../Fixtures/translation_sources');
         $fileExtractor->setPattern(['*.js', '*.ts']);
 
         $catalogue = $fileExtractor->extract();
