@@ -18,7 +18,7 @@ use SplFileInfo;
 
 final class TypeScriptFileVisitorTest extends TestCase
 {
-    private const SERVER_FIXTURE_TEMPLATE = <<<'PHP'
+    private const string SERVER_FIXTURE_TEMPLATE = <<<'PHP'
         <?php
 
         $mode = $argv[1] ?? null;
@@ -36,7 +36,7 @@ final class TypeScriptFileVisitorTest extends TestCase
         }
         PHP;
 
-    private const RESTARTING_SERVER_FIXTURE_TEMPLATE = <<<'PHP'
+    private const string RESTARTING_SERVER_FIXTURE_TEMPLATE = <<<'PHP'
         <?php
 
         $mode = $argv[1] ?? null;

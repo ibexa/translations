@@ -56,16 +56,28 @@ final class JavaScriptFileVisitor implements FileVisitorInterface, LoggerAwareIn
             return;
         }
 
+        $ast = $this->parseFile($file);
+        if ($ast === null) {
+            return;
+        }
+
+        $ast->traverse(function (Node\Node $node) use ($catalogue, $file): void {
+            $this->visitNode($node, $file, $catalogue);
+        });
+    }
+
+    private function parseFile(SplFileInfo $file): ?Node\Program
+    {
         $realPath = $file->getRealPath();
         if ($realPath === false) {
-            return;
+            return null;
         }
 
         $source = file_get_contents($realPath);
         if ($source === false) {
             $this->logger?->error(sprintf('Unable to read file %s.', $realPath));
 
-            return;
+            return null;
         }
 
         try {
@@ -75,61 +87,80 @@ final class JavaScriptFileVisitor implements FileVisitorInterface, LoggerAwareIn
                 'sourceType' => Peast::SOURCE_TYPE_MODULE,
             ]);
 
-            $ast = $parser->parse();
+            return $parser->parse();
         } catch (Exception $e) {
             $this->logger?->error(sprintf(
                 'Unable to parse file %s: %s in line %d column %d',
-                $file->getRealPath(),
+                $realPath,
                 $e->getMessage(),
                 $e->getPosition()->getLine(),
                 $e->getPosition()->getColumn()
             ));
 
+            return null;
+        }
+    }
+
+    private function visitNode(
+        Node\Node $node,
+        SplFileInfo $file,
+        MessageCatalogue $catalogue
+    ): void {
+        if (!$node instanceof Node\CallExpression) {
             return;
         }
 
-        $ast->traverse(function (Node\Node $node) use ($catalogue, $file): void {
-            if (!$node instanceof Node\CallExpression) {
-                return;
-            }
+        $methodName = $this->getTranslatorMethodName($node);
+        if ($methodName === null) {
+            return;
+        }
 
-            $callee = $node->getCallee();
-            if (!$callee instanceof Node\MemberExpression) {
-                return;
-            }
+        $arguments = $node->getArguments();
+        $id = $this->extractId($file, $arguments);
+        if ($id === null) {
+            return;
+        }
 
-            $object = $callee->getObject();
-            $property = $callee->getProperty();
-            if (!$object instanceof Node\Identifier || !$property instanceof Node\Identifier) {
-                return;
-            }
+        $message = new Message(
+            $id,
+            $this->extractDomain($file, $arguments, $methodName) ?? $this->defaultDomain
+        );
 
-            $methodName = $property->getName();
-            if ($object->getName() !== self::TRANSLATOR_OBJECT
-                || !in_array($methodName, [self::TRANSLATOR_TRANS_METHOD, self::TRANSLATOR_TRANS_CHOICE_METHOD], true)
-            ) {
-                return;
-            }
+        $description = $this->extractDesc($arguments);
+        if ($description !== null) {
+            $message->setDesc($description);
+        }
 
-            $arguments = $node->getArguments();
-            $id = $this->extractId($file, $arguments);
-            if ($id === null) {
-                return;
-            }
+        $message->addSource(new FileSource((string)$file));
+        $catalogue->add($message);
+    }
 
-            $message = new Message(
-                $id,
-                $this->extractDomain($file, $arguments, $methodName) ?? $this->defaultDomain
-            );
+    /**
+     * Returns the name of the called translator method, or null if the call is not a translator call.
+     */
+    private function getTranslatorMethodName(Node\CallExpression $node): ?string
+    {
+        $callee = $node->getCallee();
+        if (!$callee instanceof Node\MemberExpression) {
+            return null;
+        }
 
-            $description = $this->extractDesc($arguments);
-            if ($description !== null) {
-                $message->setDesc($description);
-            }
+        $object = $callee->getObject();
+        $property = $callee->getProperty();
+        if (!$object instanceof Node\Identifier || !$property instanceof Node\Identifier) {
+            return null;
+        }
 
-            $message->addSource(new FileSource((string)$file));
-            $catalogue->add($message);
-        });
+        if ($object->getName() !== self::TRANSLATOR_OBJECT) {
+            return null;
+        }
+
+        $methodName = $property->getName();
+        if (!in_array($methodName, [self::TRANSLATOR_TRANS_METHOD, self::TRANSLATOR_TRANS_CHOICE_METHOD], true)) {
+            return null;
+        }
+
+        return $methodName;
     }
 
     /**
