@@ -5,12 +5,13 @@
     "prettier": "eslint-config-ibexa/prettier",
     "dependencies": {},
     "devDependencies": {
+        "@typescript-eslint/typescript-estree": "^8.62.1",
         "eslint-config-ibexa": "https://github.com/ibexa/eslint-config-ibexa.git#v1.0.0"
     },
     "scripts": {
         "test": "yarn prettier-test && yarn eslint-test",
         "fix": "yarn prettier-test --write && yarn eslint-test --fix",
-        "eslint-test": "eslint \"./src/bundle/Resources/**/*.js\"",
-        "prettier-test": "yarn prettier \"./src/bundle/Resources/**/*.{js,scss}\" --check"
+        "eslint-test": "eslint \"./src/**/*.{js,mjs}\"",
+        "prettier-test": "yarn prettier \"./src/**/*.{js,mjs,scss}\" --check"
     }
 }
