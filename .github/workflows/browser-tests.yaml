@@ -12,5 +12,5 @@ jobs:
         uses: ibexa/gh-workflows/.github/workflows/browser-tests.yml@main
         with:
             project-edition: 'oss'
-            test-suite:  '--profile=browser --suite=translations --config=vendor/ibexa/translations/behat_suites.yaml'
+            test-suite:  '--profile=browser --suite=translations --config=vendor/ibexa/translations/behat_suites.php'
         secrets: inherit
