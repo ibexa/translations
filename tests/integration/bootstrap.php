@@ -6,65 +6,10 @@
  */
 declare(strict_types=1);
 
-use Ibexa\Contracts\Core\Search\VersatileHandler;
-use Ibexa\Contracts\Core\Test\Persistence\Fixture\FixtureImporter;
-use Ibexa\Tests\Core\Repository\LegacySchemaImporter;
-use Ibexa\Tests\Integration\Translations\TestKernel;
-use Psr\Container\ContainerInterface;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
-use Symfony\Component\Console\Input\ArrayInput;
+use Ibexa\Contracts\Test\Core\Bootstrapper\Bootstrapper;
 
 require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 
 chdir(dirname(__DIR__, 2));
 
-$kernel = new TestKernel('test', true);
-$kernel->boot();
-
-$application = new Application($kernel);
-$application->setAutoExit(false);
-
-$databaseUrl = getenv('DATABASE_URL');
-if ($databaseUrl !== false && !str_starts_with($databaseUrl, 'sqlite')) {
-    $application->run(new ArrayInput([
-        'command' => 'doctrine:database:drop',
-        '--if-exists' => '1',
-        '--force' => '1',
-        '--quiet' => true,
-    ]));
-}
-
-$application->run(new ArrayInput([
-    'command' => 'doctrine:database:create',
-    '--quiet' => true,
-]));
-
-$application->run(new ArrayInput([
-    'command' => 'doctrine:schema:update',
-    '--em' => 'ibexa_default',
-    '--force' => true,
-    '--quiet' => true,
-]));
-
-/** @var ContainerInterface $testContainer */
-$testContainer = $kernel->getContainer()->get('test.service_container');
-
-/** @var LegacySchemaImporter $schemaImporter */
-$schemaImporter = $testContainer->get(LegacySchemaImporter::class);
-foreach ($kernel->getSchemaFiles() as $file) {
-    $schemaImporter->importSchema($file);
-}
-
-/** @var FixtureImporter $fixtureImporter */
-$fixtureImporter = $testContainer->get(FixtureImporter::class);
-foreach ($kernel->getFixtures() as $fixture) {
-    $fixtureImporter->import($fixture);
-}
-
-/** @var VersatileHandler $handler */
-$handler = $testContainer->get('ibexa.spi.search');
-$handler->purgeIndex();
-
-// Add fixtures if applicable
-
-$kernel->shutdown();
+(new Bootstrapper())->bootstrap();

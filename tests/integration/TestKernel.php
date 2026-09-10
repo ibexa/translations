@@ -8,36 +8,20 @@ declare(strict_types=1);
 
 namespace Ibexa\Tests\Integration\Translations;
 
+use Ibexa\Bundle\Test\Core\IbexaTestCoreBundle;
 use Ibexa\Bundle\Translations\IbexaTranslationsBundle;
 use Ibexa\Contracts\Test\Core\IbexaTestKernel;
 use JMS\TranslationBundle\Translation\Extractor\FileExtractor;
 
 final class TestKernel extends IbexaTestKernel
 {
-    public function getSchemaFiles(): iterable
-    {
-        yield from parent::getSchemaFiles();
-
-        yield from [
-            $this->locateResource('@IbexaCoreBundle/Resources/config/storage/legacy/schema.yaml'),
-        ];
-    }
-
-    public function getFixtures(): iterable
-    {
-        yield from parent::getFixtures();
-    }
-
     public function registerBundles(): iterable
     {
         yield from parent::registerBundles();
 
-        yield new IbexaTranslationsBundle();
-    }
+        yield new IbexaTestCoreBundle();
 
-    protected static function getExposedServicesByClass(): iterable
-    {
-        yield from parent::getExposedServicesByClass();
+        yield new IbexaTranslationsBundle();
     }
 
     protected static function getExposedServicesById(): iterable
