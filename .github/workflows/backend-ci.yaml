@@ -1,10 +1,11 @@
-name: Backend build
+name: Backend CI
 
 on:
     push:
         branches:
             - '[0-9]+.[0-9]+'
     pull_request: ~
+    workflow_dispatch: ~
 
 jobs:
     cs-fix:
@@ -19,11 +20,15 @@ jobs:
 
             -   uses: ibexa/gh-workflows/actions/composer-install@main
                 with:
+                    php-version: ${{ matrix.php }}
                     gh-client-id: ${{ secrets.AUTOMATION_CLIENT_ID }}
                     gh-client-secret: ${{ secrets.AUTOMATION_CLIENT_SECRET }}
 
             -   name: Run code style check
-                run: composer run-script check-cs -- --format=checkstyle | cs2pr
+                shell: bash
+                run: |
+                    set -euo pipefail
+                    composer run-script check-cs -- --format=checkstyle | cs2pr
 
     deptrac:
         name: Deptrac
@@ -31,7 +36,7 @@ jobs:
         steps:
             -   uses: actions/checkout@v7
             -   name: Deptrac
-                uses: smoench/deptrac-action@master
+                uses: smoench/deptrac-action@1.0.2
 
     tests:
         name: Tests
@@ -50,6 +55,7 @@ jobs:
 
             -   uses: ibexa/gh-workflows/actions/composer-install@main
                 with:
+                    php-version: ${{ matrix.php }}
                     gh-client-id: ${{ secrets.AUTOMATION_CLIENT_ID }}
                     gh-client-secret: ${{ secrets.AUTOMATION_CLIENT_SECRET }}
 
@@ -82,6 +88,7 @@ jobs:
 
             -   uses: ibexa/gh-workflows/actions/composer-install@main
                 with:
+                    php-version: ${{ matrix.php }}
                     gh-client-id: ${{ secrets.AUTOMATION_CLIENT_ID }}
                     gh-client-secret: ${{ secrets.AUTOMATION_CLIENT_SECRET }}
 
