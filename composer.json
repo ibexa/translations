@@ -9,7 +9,7 @@
     "minimum-stability": "dev",
     "prefer-stable": true,
     "require": {
-        "php": ">=8.3",
+        "php": ">=8.5",
         "ext-json": "*",
         "doctrine/annotations": "^2.0",
         "ibexa/core": "~6.0.x-dev",
