@@ -129,7 +129,7 @@ final class TypeScriptFileVisitorTest extends TestCase
         $visitor = $this->createVisitor($scriptPath);
 
         $logger = $this->createMock(LoggerInterface::class);
-        $logger->expects(self::once())
+        $logger->expects($this->once())
             ->method('warning')
             ->with(self::stringContains('Could not extract domain'));
         $visitor->setLogger($logger);
