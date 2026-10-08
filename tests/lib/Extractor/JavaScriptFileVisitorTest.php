@@ -53,7 +53,7 @@ final class JavaScriptFileVisitorTest extends TestCase
             JS);
 
         $logger = $this->createMock(LoggerInterface::class);
-        $logger->expects(self::once())
+        $logger->expects($this->once())
             ->method('error')
             ->with(self::stringContains('Could not extract id, expected string literal but got Identifier'));
 
