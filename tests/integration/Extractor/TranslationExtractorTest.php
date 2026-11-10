@@ -9,7 +9,7 @@ declare(strict_types=1);
 namespace Ibexa\Tests\Integration\Translations\Extractor;
 
 use Ibexa\Contracts\Test\Core\IbexaKernelTestCase;
-use Ibexa\Contracts\Test\Core\IbexaTestKernel;
+use Ibexa\Contracts\Test\Core\IbexaTestCore;
 use JMS\TranslationBundle\Translation\Extractor\FileExtractor;
 
 final class TranslationExtractorTest extends IbexaKernelTestCase
@@ -18,7 +18,7 @@ final class TranslationExtractorTest extends IbexaKernelTestCase
     {
         self::bootKernel();
 
-        $fileExtractor = self::getContainer()->get(IbexaTestKernel::getAliasServiceId(
+        $fileExtractor = self::getContainer()->get(IbexaTestCore::getAliasServiceId(
             'jms_translation.extractor.file_extractor',
         ));
         self::assertInstanceOf(FileExtractor::class, $fileExtractor);
